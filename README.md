@@ -7,7 +7,8 @@ Data sources (no API keys needed):
   (the same data as the forecast.weather.gov digital page), feels-like, gusts,
   rain/snow amounts, alerts, the latest airport observation, and live precipitation radar
   (local station loop or frame-by-frame scrubber).
-- Open-Meteo: air quality, UV index, 15-minute rain outlook, place search.
+- Open-Meteo: air quality & pollutant breakdown (PM2.5, PM10, ozone, NO₂, SO₂, CO),
+  UV index, 15-minute rain outlook, place search.
 
 ## Put it online (needs HTTPS for install)
 

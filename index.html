@@ -305,6 +305,28 @@ main { padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px); }
 .radar-modal-stage img { display: block; width: 100%; height: auto; cursor: zoom-in; }
 .radar-modal-stage.zoomed img { width: 185%; max-width: none; cursor: zoom-out; }
 
+/* ---------- Air quality breakdown ---------- */
+.aq-pill { border: 0; background: rgba(255,255,255,.18); color: #fff; font: inherit; font-size: .84rem; font-weight: 600; padding: 1px 8px; border-radius: 999px; cursor: pointer; vertical-align: baseline; }
+.aq-pill:active { background: rgba(255,255,255,.3); }
+.tile-btn { border: 0; text-align: left; font: inherit; color: inherit; cursor: pointer; width: 100%; }
+.tile-btn span { color: var(--accent); font-weight: 600; }
+.aq-sub { margin: -6px 0 12px; font-size: .84rem; color: var(--muted); }
+.aq-hero { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; background: var(--bg); margin-bottom: 12px; }
+.aq-num { font-size: 2.1rem; font-weight: 700; line-height: 1; min-width: 3.2rem; text-align: center; }
+.aq-badge { display: inline-block; font-size: .76rem; font-weight: 700; color: #fff; padding: 2px 8px; border-radius: 999px; background: var(--aq-c, #2e9e5b); margin-bottom: 4px; }
+.aq-advice { font-size: .84rem; line-height: 1.4; color: var(--ink); }
+.aq-driver { font-size: .78rem; color: var(--muted); margin-top: 3px; }
+.aq-list { list-style: none; margin: 0 0 12px; padding: 0; }
+.aq-row { padding: 9px 0; border-top: 1px solid var(--line); }
+.aq-row:first-child { border-top: 0; }
+.aq-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: .9rem; }
+.aq-top b { font-weight: 650; }
+.aq-top span { font-size: .82rem; font-weight: 650; color: var(--muted); white-space: nowrap; }
+.aq-desc { font-size: .78rem; color: var(--muted); margin-top: 1px; }
+.aq-bar { display: block; height: 5px; border-radius: 3px; background: var(--bg); margin-top: 5px; overflow: hidden; }
+.aq-bar b { display: block; height: 100%; border-radius: 3px; background: var(--aq-c, #2e9e5b); }
+.aq-note { font-size: .78rem; line-height: 1.45; color: var(--muted); background: var(--bg); padding: 10px 12px; border-radius: 12px; margin: 0; }
+
 /* ---------- Loading / footer / sheet ---------- */
 .skel { height: 74px; border-radius: 20px; margin-bottom: 12px; background: linear-gradient(90deg, var(--card) 0%, var(--line) 50%, var(--card) 100%); background-size: 200% 100%; animation: shimmer 1.3s infinite; }
 @keyframes shimmer { to { background-position: -200% 0; } }
@@ -450,6 +472,14 @@ footer .btn[hidden] { display: none; }
     <div class="radar-modal-stage" id="radarStage">
       <img id="radarModalImg" alt="Enlarged NWS weather radar">
     </div>
+  </div>
+</div>
+
+<div class="sheet-bg" id="aqBg" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="aqTitle">
+    <h2><span id="aqTitle">Air Quality</span><button id="aqClose" type="button" aria-label="Close">✕</button></h2>
+    <p class="aq-sub" id="aqSub"></p>
+    <div id="aqBody"></div>
   </div>
 </div>
 
@@ -642,7 +672,7 @@ async function getForecast(retried) {
       point.grid ? fetchJSON(point.grid, 2).catch(() => null) : null,
       fetchJSON(`${API}/alerts/active?point=${locId(at)}`, 2).catch(() => null),
       point.station ? fetchJSON(`${API}/stations/${point.station}/observations/latest`, 2).catch(() => null) : null,
-      fetchJSON(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${at.lat}&longitude=${at.lon}&hourly=us_aqi,uv_index&timeformat=unixtime&forecast_days=5`, 2).catch(() => null),
+      fetchJSON(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${at.lat}&longitude=${at.lon}&hourly=us_aqi,uv_index,us_aqi_pm2_5,us_aqi_pm10,us_aqi_ozone,us_aqi_nitrogen_dioxide,us_aqi_sulphur_dioxide,us_aqi_carbon_monoxide,pm2_5,pm10,ozone,nitrogen_dioxide,dust&timeformat=unixtime&forecast_days=5`, 2).catch(() => null),
       fetchJSON(`https://api.open-meteo.com/v1/forecast?latitude=${at.lat}&longitude=${at.lon}&minutely_15=precipitation,snowfall&forecast_minutely_15=12&past_minutely_15=1&timeformat=unixtime`, 1).catch(() => null),
     ]);
     const gp = (g && g.properties) || {};
@@ -651,12 +681,25 @@ async function getForecast(retried) {
     const sky = series(gp.skyCover, v => v);
     const qpf = series(gp.quantitativePrecipitation, toIn, true);
     const snow = series(gp.snowfallAmount, toIn, true);
-    const aqi = {}, uvi = {};
+    const aqi = {}, aqd = {}, uvi = {};
     if (aq && aq.hourly && Array.isArray(aq.hourly.time)) {
-      aq.hourly.time.forEach((s, i) => {
+      const H = aq.hourly;
+      const pick = (arr, i, round) => arr && arr[i] != null ? (round ? Math.round(arr[i]) : Math.round(arr[i] * 10) / 10) : null;
+      H.time.forEach((s, i) => {
         const k = hourKey(s * 1000);
-        const a = aq.hourly.us_aqi && aq.hourly.us_aqi[i], u = aq.hourly.uv_index && aq.hourly.uv_index[i];
-        if (a != null) aqi[k] = Math.round(a);
+        const a = H.us_aqi && H.us_aqi[i], u = H.uv_index && H.uv_index[i];
+        if (a != null) {
+          aqi[k] = Math.round(a);
+          aqd[k] = {
+            pm25: pick(H.us_aqi_pm2_5, i, true), pm25v: pick(H.pm2_5, i),
+            pm10: pick(H.us_aqi_pm10, i, true), pm10v: pick(H.pm10, i),
+            o3: pick(H.us_aqi_ozone, i, true), o3v: pick(H.ozone, i),
+            no2: pick(H.us_aqi_nitrogen_dioxide, i, true), no2v: pick(H.nitrogen_dioxide, i),
+            so2: pick(H.us_aqi_sulphur_dioxide, i, true),
+            co: pick(H.us_aqi_carbon_monoxide, i, true),
+            dust: pick(H.dust, i),
+          };
+        }
         if (u != null) uvi[k] = Math.round(u);
       });
     }
@@ -686,6 +729,7 @@ async function getForecast(retried) {
         uv: uvi[k] != null ? uvi[k] : uvEstimate(t, at.lat, at.lon, skyV),
         uvEst: uvi[k] == null,
         aqi: aqi[k] != null ? aqi[k] : null,
+        aqd: aqd[k] || null,
       };
     });
     const prev = data && locId(data.loc || {}) === locId(at) ? data : null;
@@ -1016,7 +1060,7 @@ function hourRow(h, F, isNow, alerts) {
       ${tile('Clouds', h.sky != null ? h.sky + '%' : '—')}
       ${tile(h.snow >= 0.05 ? 'Snow' : 'Rain', h.snow >= 0.05 ? inches(h.snow) + '"' : (h.rain >= 0.005 ? inches(h.rain) + '"' : '0"'))}
       ${tile(h.uvEst ? 'UV est.' : 'UV', h.uv ? `${h.uv} ${uvWord(h.uv)}` : '0')}
-      ${h.aqi != null ? tile('AQI', `${h.aqi} ${aqiWord(h.aqi)}`) : ''}
+      ${h.aqi != null ? `<button class="tile tile-btn" type="button" data-aq-hour="${h.t}" aria-label="Show air quality breakdown for ${esc(F.hour.format(h.t))}"><span>AQI ▾</span><b>${h.aqi} ${aqiWord(h.aqi)}</b></button>` : ''}
     </div>
   </li>`;
 }
@@ -1141,8 +1185,9 @@ function renderHero(d, F, hrs, now) {
   meta.push(wind ? `Wind ${dir ? dir + ' ' : ''}${wind} mph${gust && gust >= wind + 7 ? ` (gusts ${gust})` : ''}` : 'Calm');
   if (rh != null) meta.push(`Humidity ${rh}%`);
   if (cur.uv >= 1) meta.push(`UV ${cur.uv}`);
-  if (cur.aqi != null) meta.push(`AQI ${cur.aqi} (${aqiWord(cur.aqi)})`);
-  $('#nowMeta').textContent = meta.join(' · ');
+  const metaHtml = meta.map(esc);
+  if (cur.aqi != null) metaHtml.push(`<button class="aq-pill" id="aqBtn" type="button" aria-label="Show air quality breakdown">AQI ${cur.aqi} (${aqiWord(cur.aqi)}) ▾</button>`);
+  $('#nowMeta').innerHTML = metaHtml.join(' · ');
   $('#nowSrc').textContent = obs ? `Observed ${F.time.format(obs.t)}${obs.station ? ' at ' + obs.station : ''}` : 'Forecast for this hour';
   const parts = headline(hrs, F, (d.alerts || []).filter(a => alertEnd(a) > now), d.nowcast, d.obs);
   const short = parts.slice(0, 2).join(' '), rest = parts.slice(2).join(' ');
@@ -1642,7 +1687,75 @@ function closeSheet() { $('#sheetBg').hidden = true; }
 $('#placeBtn').addEventListener('click', openSheet);
 $('#sheetClose').addEventListener('click', closeSheet);
 $('#sheetBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeSheet(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); closeRadarModal(); } });
+const aqColor = a => a > 300 ? '#7e0023' : a > 200 ? '#8e24aa' : a > 150 ? '#d0342c' : a > 100 ? '#e07a10' : a > 50 ? '#c9a40a' : '#2e9e5b';
+const aqAdvice = a => a > 300 ? 'Health emergency: everyone should avoid outdoor exertion.'
+  : a > 200 ? 'Health alert: everyone may experience more serious health effects.'
+  : a > 150 ? 'Everyone may begin to experience health effects; limit prolonged outdoor exertion.'
+  : a > 100 ? 'Sensitive groups should reduce prolonged or heavy outdoor exertion.'
+  : a > 50 ? 'Acceptable air quality; unusually sensitive people should consider limiting prolonged outdoor exertion.'
+  : 'Clean air with little or no risk from air pollution.';
+
+function openAqSheet(h) {
+  if (!data || !h || h.aqi == null) return;
+  const F = formatters(data.tz);
+  const now = Date.now();
+  const isNow = Math.abs(h.t - now) < HOUR;
+  const whenStr = isNow ? 'Current hour' : whenText(F, h.t, now);
+  const d = h.aqd;
+  const items = d ? [
+    { key: 'pm25', valKey: 'pm25v', name: 'Fine particles (PM2.5)', desc: 'Smoke, haze, and fine exhaust' },
+    { key: 'pm10', valKey: 'pm10v', name: 'Coarse particles (PM10)', desc: 'Road dust, dirt, and larger airborne particles' },
+    { key: 'o3', valKey: 'o3v', name: 'Ground-level ozone (O₃)', desc: 'Smog formed by sunlight and emissions' },
+    { key: 'no2', valKey: 'no2v', name: 'Nitrogen dioxide (NO₂)', desc: 'Traffic and fuel-burning emissions' },
+    { key: 'so2', name: 'Sulfur dioxide (SO₂)', desc: 'Industrial and power-plant emissions' },
+    { key: 'co', name: 'Carbon monoxide (CO)', desc: 'Vehicle and combustion exhaust' },
+  ].filter(x => d[x.key] != null).sort((a, b) => d[b.key] - d[a.key]) : [];
+
+  const driver = items.length && d[items[0].key] > 0 ? `Main driver: ${items[0].name}` : '';
+  $('#aqSub').textContent = `${data.place} · ${whenStr}`;
+  const c = aqColor(h.aqi);
+  const rows = items.map(x => {
+    const v = d[x.key];
+    const conc = x.valKey && d[x.valKey] != null ? ` · ${d[x.valKey]} μg/m³` : '';
+    const w = Math.min(100, Math.max(4, v / 2));
+    return `<li class="aq-row">
+      <div class="aq-top"><b>${esc(x.name)}</b><span>AQI ${v} (${esc(aqiWord(v))})${esc(conc)}</span></div>
+      <div class="aq-desc">${esc(x.desc)}</div>
+      <i class="aq-bar"><b style="width:${w}%;--aq-c:${aqColor(v)}"></b></i>
+    </li>`;
+  }).join('') + (d && d.dust > 0 ? `<li class="aq-row"><div class="aq-top"><b>Surface dust</b><span>${d.dust} μg/m³</span></div><div class="aq-desc">Airborne mineral dust</div></li>` : '');
+
+  $('#aqBody').innerHTML = `<div class="aq-hero" style="--aq-c:${c}">
+      <div class="aq-num" style="color:${c}">${h.aqi}</div>
+      <div>
+        <span class="aq-badge">${esc(cap(aqiWord(h.aqi)))}</span>
+        <div class="aq-advice">${esc(aqAdvice(h.aqi))}</div>
+        ${driver ? `<div class="aq-driver">${esc(driver)}</div>` : ''}
+      </div>
+    </div>
+    ${rows ? `<ul class="aq-list">${rows}</ul>` : '<p class="aq-note" style="margin-bottom:10px">Pollutant breakdown will appear after the next forecast refresh.</p>'}
+    <p class="aq-note"><b>Pollen &amp; allergens:</b> Tree, grass, and weed pollen counts aren't available in Open-Meteo's US feed (Europe only). Larger airborne particles like dust are reflected in PM10. Data from Open-Meteo (US EPA AQI).</p>`;
+  $('#aqBg').hidden = false;
+}
+function closeAqSheet() { $('#aqBg').hidden = true; }
+$('#aqClose').addEventListener('click', closeAqSheet);
+$('#aqBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeAqSheet(); });
+document.addEventListener('click', e => {
+  if (!data) return;
+  if (e.target.closest('#aqBtn')) {
+    const now = Date.now();
+    const cur = data.hours.find(h => h.t + HOUR > now);
+    if (cur) openAqSheet(cur);
+    return;
+  }
+  const hb = e.target.closest('[data-aq-hour]');
+  if (hb) {
+    const t = +hb.dataset.aqHour;
+    const h = data.hours.find(x => x.t === t);
+    if (h) openAqSheet(h);
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); closeRadarModal(); closeAqSheet(); } });
 $('#places').addEventListener('click', e => {
   if (e.target.closest('[data-gps]')) { locate(t => { $('#sheetMsg').textContent = t; }); return; }
   const pick = e.target.closest('[data-pick]'), del = e.target.closest('[data-del]');
