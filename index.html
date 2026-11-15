@@ -327,6 +327,37 @@ main { padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px); }
 .aq-bar b { display: block; height: 100%; border-radius: 3px; background: var(--aq-c, #2e9e5b); }
 .aq-note { font-size: .78rem; line-height: 1.45; color: var(--muted); background: var(--bg); padding: 10px 12px; border-radius: 12px; margin: 0; }
 
+/* ---------- Unfolded / Foldable / Wide Two-Pane Layout ---------- */
+@media (min-width: 700px) {
+  .hero { padding-left: calc(env(safe-area-inset-left) + 22px); padding-right: calc(env(safe-area-inset-right) + 22px); }
+  .hero-inner { max-width: 1120px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 18px; align-items: end; margin-top: 2px; }
+  .hero-grid .headline { margin: 0; }
+  .hstrip { margin-left: -22px; margin-right: -22px; padding-left: 22px; padding-right: 22px; }
+  .strip { margin-left: -22px; margin-right: -22px; padding-left: 22px; padding-right: 22px; }
+  .wrap {
+    max-width: 1120px; display: grid; grid-template-columns: minmax(310px, 43%) minmax(0, 1fr);
+    gap: 14px; align-items: start;
+    padding: 14px 16px calc(env(safe-area-inset-bottom) + 20px);
+  }
+  #alerts, .banner, footer { grid-column: 1 / -1; }
+  #alerts { padding: 0; }
+  .banner { margin: 0; }
+  #radar { padding: 0; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+  #radar:empty + main { grid-column: 1 / -1; }
+  main { padding: 0; }
+  footer { padding: 8px 16px calc(env(safe-area-inset-bottom) + 16px); }
+  .sheet-bg { align-items: center; padding: 16px; }
+  .sheet { border-radius: 22px; max-height: 82vh; }
+}
+@media (horizontal-viewport-segments: 2) {
+  .hero-inner, .wrap { max-width: none; }
+  .wrap {
+    grid-template-columns: calc(env(viewport-segment-width 0 0) - 16px) minmax(0, 1fr);
+    column-gap: calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0) + 32px);
+  }
+}
+
 /* ---------- Loading / footer / sheet ---------- */
 .skel { height: 74px; border-radius: 20px; margin-bottom: 12px; background: linear-gradient(90deg, var(--card) 0%, var(--line) 50%, var(--card) 100%); background-size: 200% 100%; animation: shimmer 1.3s infinite; }
 @keyframes shimmer { to { background-position: -200% 0; } }
@@ -405,14 +436,18 @@ footer .btn[hidden] { display: none; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
       </button>
     </div>
-    <div class="now">
-      <div class="now-icon" id="nowIcon"></div>
-      <div class="now-temp" id="nowTemp">--°</div>
+    <div class="hero-grid">
+      <div class="hero-main">
+        <div class="now">
+          <div class="now-icon" id="nowIcon"></div>
+          <div class="now-temp" id="nowTemp">--°</div>
+        </div>
+        <div class="now-desc" id="nowDesc">&nbsp;</div>
+        <div class="now-meta" id="nowMeta">&nbsp;</div>
+        <div class="now-src" id="nowSrc"></div>
+      </div>
+      <p class="headline" id="headline"></p>
     </div>
-    <div class="now-desc" id="nowDesc">&nbsp;</div>
-    <div class="now-meta" id="nowMeta">&nbsp;</div>
-    <div class="now-src" id="nowSrc"></div>
-    <p class="headline" id="headline"></p>
     <div class="hstrip" id="hourStrip" aria-label="Next 24 hours"></div>
     <div class="strip" id="strip" aria-label="Days"></div>
   </div>
