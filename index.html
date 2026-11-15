@@ -192,7 +192,7 @@ main { padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px); }
 .chart .c-bar { fill: var(--rain); opacity: .32; }
 .chart .c-line { fill: none; stroke: var(--warm); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .chart .c-dot { fill: var(--card); stroke: var(--warm); stroke-width: 2; }
-.chart .c-lbl { fill: var(--ink); font-size: 15px; font-weight: 700; text-anchor: middle; }
+.chart .c-lbl { fill: var(--ink); font-size: 12.5px; font-weight: 700; text-anchor: middle; }
 .chart .c-tick { fill: var(--muted); font-size: 13px; text-anchor: middle; }
 .chart .c-base { stroke: var(--line); stroke-width: 1; }
 .chart-key { display: flex; gap: 14px; padding: 0 16px; font-size: .76rem; color: var(--muted); }
@@ -327,6 +327,15 @@ main { padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px); }
 .aq-bar b { display: block; height: 100%; border-radius: 3px; background: var(--aq-c, #2e9e5b); }
 .aq-note { font-size: .78rem; line-height: 1.45; color: var(--muted); background: var(--bg); padding: 10px 12px; border-radius: 12px; margin: 0; }
 
+/* ---------- Current condition tiles ---------- */
+#metrics:empty { display: none; }
+#metrics { padding: 12px 12px 0; }
+.metrics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.m-tile { background: var(--card); border-radius: 16px; padding: 11px 13px; box-shadow: var(--shadow); min-width: 0; }
+.m-tile span { display: block; font-size: .74rem; font-weight: 650; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.m-tile b { display: block; font-size: 1.12rem; font-weight: 700; margin-top: 3px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-tile small { display: block; font-size: .76rem; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
 /* ---------- Unfolded / Foldable / Wide Two-Pane Layout ---------- */
 @media (min-width: 700px) {
   .hero { padding-left: calc(env(safe-area-inset-left) + 22px); padding-right: calc(env(safe-area-inset-right) + 22px); }
@@ -343,8 +352,9 @@ main { padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px); }
   #alerts, .banner, footer { grid-column: 1 / -1; }
   #alerts { padding: 0; }
   .banner { margin: 0; }
-  #radar { padding: 0; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
-  #radar:empty + main { grid-column: 1 / -1; }
+  .side { display: flex; flex-direction: column; gap: 12px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+  #metrics, #radar { padding: 0; }
+  .side:has(#metrics:empty):has(#radar:empty) + main { grid-column: 1 / -1; }
   main { padding: 0; }
   footer { padding: 8px 16px calc(env(safe-area-inset-bottom) + 16px); }
   .sheet-bg { align-items: center; padding: 16px; }
@@ -468,7 +478,10 @@ footer .btn[hidden] { display: none; }
     <span id="bannerText"></span>
     <button id="bannerRetry">Retry</button>
   </div>
-  <div id="radar"></div>
+  <div class="side" id="side">
+    <div id="metrics"></div>
+    <div id="radar"></div>
+  </div>
   <main id="days">
     <div class="skel"></div><div class="skel"></div><div class="skel"></div>
   </main>
@@ -639,6 +652,8 @@ function parseObs(j, stationName) {
   if (!p || !p.temperature || p.temperature.value == null) return null;
   const val = (q, conv) => q && q.value != null ? Math.round(conv(q.value, q.unitCode || '')) : null;
   const feelsQ = p.windChill && p.windChill.value != null ? p.windChill : p.heatIndex;
+  const presQ = p.barometricPressure && p.barometricPressure.value != null ? p.barometricPressure : p.seaLevelPressure;
+  const toHpa = (v, u) => /hPa|mb/i.test(u) ? v : /Pa$/i.test(u) ? v / 100 : v;
   return {
     t: Date.parse(p.timestamp),
     temp: val(p.temperature, toF),
@@ -647,6 +662,7 @@ function parseObs(j, stationName) {
     gust: val(p.windGust, toMph),
     dir: p.windDirection && p.windDirection.value != null ? COMPASS[Math.round(p.windDirection.value / 22.5) % 16] : '',
     rh: p.relativeHumidity && p.relativeHumidity.value != null ? Math.round(p.relativeHumidity.value) : null,
+    pressure: presQ && presQ.value != null ? Math.round(toHpa(presQ.value, presQ.unitCode || '') * 10) / 10 : null,
     text: p.textDescription || '',
     station: stationName || p.station || '',
   };
@@ -708,7 +724,7 @@ async function getForecast(retried) {
       fetchJSON(`${API}/alerts/active?point=${locId(at)}`, 2).catch(() => null),
       point.station ? fetchJSON(`${API}/stations/${point.station}/observations/latest`, 2).catch(() => null) : null,
       fetchJSON(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${at.lat}&longitude=${at.lon}&hourly=us_aqi,uv_index,us_aqi_pm2_5,us_aqi_pm10,us_aqi_ozone,us_aqi_nitrogen_dioxide,us_aqi_sulphur_dioxide,us_aqi_carbon_monoxide,pm2_5,pm10,ozone,nitrogen_dioxide,dust&timeformat=unixtime&forecast_days=5`, 2).catch(() => null),
-      fetchJSON(`https://api.open-meteo.com/v1/forecast?latitude=${at.lat}&longitude=${at.lon}&minutely_15=precipitation,snowfall&forecast_minutely_15=12&past_minutely_15=1&timeformat=unixtime`, 1).catch(() => null),
+      fetchJSON(`https://api.open-meteo.com/v1/forecast?latitude=${at.lat}&longitude=${at.lon}&current=pressure_msl&minutely_15=precipitation,snowfall&forecast_minutely_15=12&past_minutely_15=1&timeformat=unixtime`, 1).catch(() => null),
     ]);
     const gp = (g && g.properties) || {};
     const feels = series(gp.apparentTemperature, toF);
@@ -774,6 +790,7 @@ async function getForecast(retried) {
       place: point.place, tz: point.tz, radar: point.radar, hours,
       alerts: al ? parseAlerts(al) : (prev ? prev.alerts || [] : []),
       obs: ob ? parseObs(ob, point.stationName) : null,
+      pressure: mq && mq.current && mq.current.pressure_msl != null ? Math.round(mq.current.pressure_msl * 10) / 10 : null,
       nowcast: mq && mq.minutely_15 ? { t: mq.minutely_15.time, p: mq.minutely_15.precipitation || [], s: mq.minutely_15.snowfall || [] } : null,
     };
   } catch (e) {
@@ -1028,16 +1045,18 @@ function chart(hs, F, id, sun) {
   const pts = hs.map((h, i) => [x(i), y(h.temp)]);
   const line = smoothPath(pts);
   const area = `${line} L${x(n - 1).toFixed(1)},${base} L${x(0).toFixed(1)},${base} Z`;
-  const iHi = temps.indexOf(tMax), iLo = temps.lastIndexOf(tMin);
-  const lbl = (i, v, below) => {
-    const ty = below ? Math.min(y(v) + 20, base - 3) : y(v) - 9;
+  const lbl = (i, v) => {
+    const ty = Math.max(14, y(v) - 8);
     const tx = Math.min(Math.max(x(i), padX + 11), W - padX - 11);
-    return `<circle class="c-dot" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3.5"/><text class="c-lbl" x="${tx.toFixed(1)}" y="${ty.toFixed(1)}">${v}°</text>`;
+    return `<circle class="c-dot" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.8"/><text class="c-lbl" x="${tx.toFixed(1)}" y="${ty.toFixed(1)}">${v}°</text>`;
   };
-  let ticks = '';
+  let ticks = '', curveLbls = '';
   hs.forEach((h, i) => {
     const lh = localHour(F, h.t);
-    if (lh % 3 === 0) ticks += `<text class="c-tick" x="${x(i).toFixed(1)}" y="${H - 5}">${tickLabel(lh)}</text>`;
+    if (lh % 3 === 0) {
+      ticks += `<text class="c-tick" x="${x(i).toFixed(1)}" y="${H - 5}">${tickLabel(lh)}</text>`;
+      curveLbls += lbl(i, h.temp);
+    }
   });
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Hourly temperature (line) and chance of precipitation (bars); night is shaded">
     <defs><linearGradient id="g${id}" x1="0" y1="0" x2="0" y2="1">
@@ -1048,7 +1067,7 @@ function chart(hs, F, id, sun) {
     ${bars}
     <path d="${area}" fill="url(#g${id})"/>
     <path class="c-line" d="${line}"/>
-    ${lbl(iHi, tMax, false)}${iLo !== iHi ? lbl(iLo, tMin, y(tMin) < base - 28) : ''}
+    ${curveLbls}
     ${ticks}
   </svg>`;
 }
@@ -1492,6 +1511,43 @@ document.addEventListener('click', e => {
   $('.hl-more').hidden = !headlineOpen;
   e.target.textContent = headlineOpen ? 'Less' : 'More';
 });
+function renderMetrics(d, hrs, now) {
+  const el = $('#metrics');
+  if (!hrs.length) { el.innerHTML = ''; return; }
+  const h = hrs[0];
+  const obs = d.obs && now - d.obs.at < 90 * 60e3 ? d.obs : null;
+  const uv = h.uv != null ? Math.round(h.uv) : null;
+  const rh = obs && obs.rh != null ? Math.round(obs.rh) : (h.rh != null ? Math.round(h.rh) : null);
+  const dew = obs && obs.dew != null ? obs.dew : h.dew;
+  const wind = obs && obs.wind != null ? obs.wind : h.wind;
+  const dir = (obs && obs.dir) || h.dir || '';
+  const gust = obs && obs.gust != null ? obs.gust : h.gust;
+  const hpa = obs && obs.pressure != null ? obs.pressure : d.pressure;
+  const inHg = hpa != null ? (hpa / 33.86389).toFixed(2) : null;
+  const tiles = [
+    {
+      lbl: 'UV index',
+      val: uv == null ? '—' : String(uv),
+      sub: uv == null ? 'Unavailable' : `${uvWord(uv)}${h.uvEst ? ' · est.' : ''}`,
+    },
+    {
+      lbl: 'Humidity',
+      val: rh == null ? '—' : `${rh}%`,
+      sub: dew != null ? `Dew pt ${dew}°` : 'Relative',
+    },
+    {
+      lbl: 'Wind',
+      val: wind == null ? '—' : (wind === 0 ? 'Calm' : `${wind} mph`),
+      sub: [dir, gust ? `Gusts ${gust}` : ''].filter(Boolean).join(' · ') || 'Steady',
+    },
+    {
+      lbl: 'Pressure',
+      val: inHg != null ? `${inHg} inHg` : '—',
+      sub: hpa != null ? `${Math.round(hpa)} mb` : 'Unavailable',
+    },
+  ];
+  el.innerHTML = `<div class="metrics-grid">${tiles.map(t => `<div class="m-tile"><span>${esc(t.lbl)}</span><b>${esc(t.val)}</b><small>${esc(t.sub)}</small></div>`).join('')}</div>`;
+}
 function render(d) {
   const F = formatters(d.tz);
   const now = Date.now();
@@ -1502,11 +1558,13 @@ function render(d) {
   updateFooter(d, F);
   const alerts = renderAlerts(d, F, now);
   if (!hrs.length) {
+    $('#metrics').innerHTML = '';
     $('#radar').innerHTML = '';
     $('#days').innerHTML = `<div class="empty">This saved forecast has run out.<br><button class="btn" data-retry>Get the latest forecast</button></div>`;
     return;
   }
   renderHero(d, F, hrs, now);
+  renderMetrics(d, hrs, now);
   renderRadar(d);
 
   // Each card runs 6 AM to 6 AM, so a day's card holds that day and the night after it
@@ -1611,6 +1669,7 @@ function loadSaved() {
   else {
     $('#days').innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
     $('#alerts').innerHTML = '';
+    $('#metrics').innerHTML = '';
     $('#radar').innerHTML = '';
     $('#place').textContent = 'Loading forecast…';
   }
