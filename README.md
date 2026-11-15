@@ -3,9 +3,10 @@
 A friendly hourly forecast from the National Weather Service for 41.6005, -93.6091 (Des Moines, IA).
 
 Data sources (no API keys needed):
-- National Weather Service (`api.weather.gov`): hourly forecast (the same data as
-  the forecast.weather.gov digital page), feels-like, gusts, rain/snow amounts,
-  alerts, and the latest airport observation.
+- National Weather Service (`api.weather.gov` & `radar.weather.gov`): hourly forecast
+  (the same data as the forecast.weather.gov digital page), feels-like, gusts,
+  rain/snow amounts, alerts, the latest airport observation, and live weather radar
+  (local station reflectivity/velocity, regional, and national loops/frames).
 - Open-Meteo: air quality, UV index, 15-minute rain outlook, place search.
 
 ## Put it online (needs HTTPS for install)

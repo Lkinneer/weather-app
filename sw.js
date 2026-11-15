@@ -1,6 +1,6 @@
 // Keeps the app itself available offline. Forecast data is fetched fresh from
 // api.weather.gov each time; the page saves the last good forecast on its own.
-const VERSION = 'wx-shell-v9';
+const VERSION = 'wx-shell-v10';
 const SHELL = [
   './',
   './index.html',

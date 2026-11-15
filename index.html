@@ -251,8 +251,58 @@ main { padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px); }
   .hr-more { grid-template-columns: repeat(3, minmax(0,1fr)); }
   .d-name small { display: none; }
   .day > summary { gap: 8px; padding: 12px; }
+  .radar-card > summary { gap: 8px; padding: 12px; }
+  .radar-body { padding: 2px 10px 12px; }
+  .r-btn { padding: 5px 7px; font-size: .76rem; }
   .now-meta { font-size: .84rem; }
 }
+
+/* ---------- Radar ---------- */
+#radar:empty { display: none; }
+#radar { padding: 12px 12px 0; }
+.radar-card { margin: 0; }
+.radar-card > summary { grid-template-columns: 2.6rem minmax(0,1fr) auto 12px; }
+.r-tag { font-size: .78rem; font-weight: 650; color: var(--rain); background: var(--rain-soft); padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+.radar-body { padding: 2px 14px 14px; }
+.radar-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px; }
+.r-seg { display: inline-flex; background: var(--bg); border-radius: 11px; padding: 3px; gap: 2px; border: 1px solid var(--line); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.r-seg::-webkit-scrollbar { display: none; }
+.r-seg[hidden] { display: none; }
+.r-btn { border: 0; background: none; color: var(--muted); font-size: .8rem; font-weight: 600; padding: 5px 9px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.r-btn[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(10,30,60,.1); }
+.r-btn:disabled { opacity: .42; cursor: default; }
+.r-reload { margin-left: auto; border: 1px solid var(--line); background: var(--bg); color: var(--muted); width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; cursor: pointer; flex: none; }
+.r-reload svg { width: 16px; height: 16px; }
+.r-reload.spin svg { animation: spin 0.9s linear infinite; }
+.radar-scrubber { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; padding: 6px 10px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }
+.radar-scrubber[hidden] { display: none; }
+.r-step { border: 0; background: var(--card); color: var(--ink); width: 28px; height: 28px; border-radius: 8px; font-weight: 700; cursor: pointer; flex: none; display: grid; place-items: center; box-shadow: 0 1px 2px rgba(10,30,60,.08); }
+.r-step:disabled { opacity: .38; cursor: default; box-shadow: none; }
+.r-range { flex: 1; min-width: 0; accent-color: var(--accent); cursor: pointer; }
+.r-flbl { font-size: .78rem; font-weight: 650; color: var(--muted); min-width: 5.4rem; text-align: right; white-space: nowrap; }
+.radar-view { position: relative; border-radius: 14px; overflow: hidden; background: var(--bg); border: 1px solid var(--line); min-height: 200px; display: grid; place-items: center; }
+.radar-view.loading::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--bg) 0%, var(--line) 50%, var(--bg) 100%); background-size: 200% 100%; animation: shimmer 1.3s infinite; z-index: 1; pointer-events: none; }
+.radar-open { all: unset; box-sizing: border-box; display: block; width: 100%; cursor: zoom-in; position: relative; }
+.radar-open[hidden] { display: none; }
+.radar-open:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.radar-img { display: block; width: 100%; height: auto; }
+.radar-hint { position: absolute; right: 8px; bottom: 8px; background: rgba(10,20,38,.7); color: #fff; font-size: .72rem; font-weight: 600; padding: 3px 8px; border-radius: 999px; pointer-events: none; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.radar-err { padding: 26px 16px; text-align: center; color: var(--muted); font-size: .88rem; line-height: 1.45; z-index: 2; }
+.radar-err[hidden] { display: none; }
+.radar-err .btn { margin-top: 10px; padding: 8px 14px; font-size: .86rem; }
+.radar-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: .78rem; color: var(--muted); }
+.radar-foot a { font-weight: 600; text-decoration: none; white-space: nowrap; }
+.sheet-bg.radar-bg { align-items: center; padding: 12px; background: rgba(5,12,25,.72); }
+.radar-modal { width: 100%; max-width: 720px; max-height: 92vh; background: var(--card); border-radius: 20px; padding: 14px 14px calc(env(safe-area-inset-bottom) + 14px); box-shadow: 0 12px 40px rgba(0,0,0,.35); display: flex; flex-direction: column; gap: 10px; }
+.radar-modal-head { display: flex; align-items: center; gap: 8px; }
+.radar-modal-title { flex: 1; min-width: 0; }
+.radar-modal-title b { display: block; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.radar-modal-title small { display: block; font-size: .78rem; color: var(--muted); }
+.radar-modal-act { border: 0; background: var(--bg); color: var(--ink); border-radius: 999px; height: 32px; padding: 0 11px; font-size: .82rem; font-weight: 600; cursor: pointer; flex: none; }
+.radar-modal-close { border: 0; background: var(--bg); color: var(--ink); border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 1rem; flex: none; }
+.radar-modal-stage { overflow: auto; border-radius: 14px; background: var(--bg); border: 1px solid var(--line); max-height: calc(92vh - 96px); -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y pinch-zoom; }
+.radar-modal-stage img { display: block; width: 100%; height: auto; cursor: zoom-in; }
+.radar-modal-stage.zoomed img { width: 185%; max-width: none; cursor: zoom-out; }
 
 /* ---------- Loading / footer / sheet ---------- */
 .skel { height: 74px; border-radius: 20px; margin-bottom: 12px; background: linear-gradient(90deg, var(--card) 0%, var(--line) 50%, var(--card) 100%); background-size: 200% 100%; animation: shimmer 1.3s infinite; }
@@ -321,6 +371,7 @@ footer .btn[hidden] { display: none; }
   <symbol id="i-mix" viewBox="0 0 64 64"><use href="#p-cloud" fill="var(--cloud)" transform="translate(1 -9) scale(.97)"/><path d="M24 47l-3 8M42 47l-3 8" stroke="var(--drop)" stroke-width="3.6" stroke-linecap="round"/><circle cx="33" cy="53" r="3" fill="var(--flake)"/><circle cx="27" cy="61" r="2.6" fill="var(--flake)"/><circle cx="45" cy="61" r="2.6" fill="var(--flake)"/></symbol>
   <symbol id="i-fog" viewBox="0 0 64 64"><use href="#p-cloud" fill="var(--cloud)" transform="translate(1 -10) scale(.97)"/><path d="M12 46h40M18 53h34M12 60h30" stroke="var(--fog)" stroke-width="3.6" stroke-linecap="round"/></symbol>
   <symbol id="i-drop" viewBox="0 0 9 12"><path d="M4.5 0C3 3 0 5.6 0 7.8A4.5 4.2 0 0 0 9 7.8C9 5.6 6 3 4.5 0z" fill="currentColor"/></symbol>
+  <symbol id="i-radar" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="var(--drop)" stroke-width="3.2" opacity=".75"/><circle cx="32" cy="32" r="15" fill="none" stroke="var(--drop)" stroke-width="2.6" opacity=".45"/><circle cx="32" cy="32" r="6" fill="none" stroke="var(--drop)" stroke-width="2.4" opacity=".4"/><path d="M32 32l17-17" stroke="var(--drop)" stroke-width="3.6" stroke-linecap="round"/><circle cx="32" cy="32" r="3.4" fill="var(--drop)"/><circle cx="44" cy="22" r="4" fill="var(--sun)"/></symbol>
 </svg>
 
 <header class="hero" id="hero">
@@ -359,12 +410,13 @@ footer .btn[hidden] { display: none; }
     <span id="bannerText"></span>
     <button id="bannerRetry">Retry</button>
   </div>
+  <div id="radar"></div>
   <main id="days">
     <div class="skel"></div><div class="skel"></div><div class="skel"></div>
   </main>
   <footer>
     <div id="updated"></div>
-    <div>Forecast, alerts &amp; observations from the <a id="nwsLink" href="https://forecast.weather.gov/" target="_blank" rel="noopener">National Weather Service</a>. Air quality, UV &amp; place search from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>.</div>
+    <div>Forecast, radar, alerts &amp; observations from the <a id="nwsLink" href="https://forecast.weather.gov/" target="_blank" rel="noopener">National Weather Service</a>. Air quality, UV &amp; place search from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>.</div>
     <button class="btn" id="installBtn" hidden>Install app</button>
   </footer>
 </div>
@@ -381,6 +433,22 @@ footer .btn[hidden] { display: none; }
     <p class="sheet-label">Saved places</p>
     <ul class="places" id="places"></ul>
     <button class="btn secondary" id="savePlace">☆ Save this place</button>
+  </div>
+</div>
+
+<div class="sheet-bg radar-bg" id="radarBg" hidden>
+  <div class="radar-modal" role="dialog" aria-modal="true" aria-labelledby="radarModalTitle">
+    <div class="radar-modal-head">
+      <div class="radar-modal-title">
+        <b id="radarModalTitle">NWS Weather Radar</b>
+        <small id="radarModalMeta"></small>
+      </div>
+      <button class="radar-modal-act" id="radarZoomBtn" type="button">Zoom</button>
+      <button class="radar-modal-close" id="radarClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="radar-modal-stage" id="radarStage">
+      <img id="radarModalImg" alt="Enlarged NWS weather radar">
+    </div>
   </div>
 </div>
 
@@ -1092,6 +1160,293 @@ function renderHero(d, F, hrs, now) {
   $('#hourStrip').innerHTML = strip;
 }
 
+/* ---------------- Weather radar (NWS RIDGE) ---------------- */
+const RADAR_BASE = 'https://radar.weather.gov/ridge/standard';
+const RADAR_REGIONS = [
+  ['UPPERMISSVLY', 'Upper Miss. Valley', ['IA', 'MN', 'MO', 'WI', 'IL', 'KS']],
+  ['CENTGRLAKES', 'Great Lakes', ['MI', 'IN', 'OH', 'KY', 'WV']],
+  ['NORTHEAST', 'Northeast', ['NY', 'PA', 'VT', 'NH', 'ME', 'MA', 'CT', 'RI', 'NJ', 'DE', 'MD', 'DC']],
+  ['SOUTHEAST', 'Southeast', ['VA', 'NC', 'SC', 'GA', 'FL']],
+  ['SOUTHMISSVLY', 'Lower Miss. Valley', ['AR', 'LA', 'MS', 'TN', 'AL']],
+  ['SOUTHPLAINS', 'Southern Plains', ['TX', 'OK']],
+  ['NORTHROCKIES', 'Northern Rockies', ['MT', 'WY', 'ND', 'SD', 'NE']],
+  ['SOUTHROCKIES', 'Southern Rockies', ['UT', 'CO', 'NM']],
+  ['PACNORTHWEST', 'Pacific NW', ['WA', 'OR', 'ID']],
+  ['PACSOUTHWEST', 'Pacific SW', ['CA', 'NV', 'AZ']],
+  ['ALASKA', 'Alaska', ['AK']],
+  ['HAWAII', 'Hawaii', ['HI']],
+  ['CARIB', 'Caribbean', ['PR', 'VI']],
+  ['GUAM', 'Guam', ['GU', 'MP']],
+];
+const STATE_REGION = Object.fromEntries(RADAR_REGIONS.flatMap(([code, label, sts]) => sts.map(s => [s, { code, label }])));
+const REGION_LABEL = Object.fromEntries(RADAR_REGIONS.map(([code, label]) => [code, label]));
+
+function radarRegion(d) {
+  const m = /,\s*([A-Z]{2})\b/.exec(d.place || '');
+  if (m && STATE_REGION[m[1]]) return STATE_REGION[m[1]];
+  const lat = d.loc && d.loc.lat, lon = d.loc && d.loc.lon;
+  let code = 'UPPERMISSVLY';
+  if (lat != null && lon != null) {
+    if (lat >= 50) code = 'ALASKA';
+    else if (lat <= 23 && lon <= -150) code = 'HAWAII';
+    else if (lat <= 20 && lon >= 140) code = 'GUAM';
+    else if (lat <= 22 && lon >= -70) code = 'CARIB';
+    else if (lon < -116 && lat >= 42) code = 'PACNORTHWEST';
+    else if (lon < -111 && lat < 42) code = 'PACSOUTHWEST';
+    else if (lon < -100 && lat >= 41) code = 'NORTHROCKIES';
+    else if (lon < -100) code = 'SOUTHROCKIES';
+    else if (lon < -95 && lat < 37) code = 'SOUTHPLAINS';
+    else if (lon < -86 && lat >= 38) code = 'UPPERMISSVLY';
+    else if (lon < -84 && lat < 38) code = 'SOUTHMISSVLY';
+    else if (lon < -80 && lat >= 37) code = 'CENTGRLAKES';
+    else if (lat >= 38.5) code = 'NORTHEAST';
+    else code = 'SOUTHEAST';
+  }
+  return { code, label: REGION_LABEL[code] };
+}
+
+const radarState = {
+  scope: store.get('wx:radarScope') || 'local',
+  prod: store.get('wx:radarProd') || 'bref',
+  mode: store.get('wx:radarMode') || 'loop',
+  frame: 0,
+  bust: Date.now(),
+  seq: 0,
+};
+
+function radarUrl(spec, suffix) {
+  if (spec.scope === 'local') {
+    return spec.prod === 'vel'
+      ? `${RADAR_BASE}/base_velocity/${spec.station}_${suffix}.gif`
+      : `${RADAR_BASE}/${spec.station}_${suffix}.gif`;
+  }
+  return `${RADAR_BASE}/${spec.scope === 'region' ? spec.reg.code : 'CONUS'}_${suffix}.gif`;
+}
+function radarSpec(d) {
+  const raw = String((d && d.radar) || '').trim().toUpperCase();
+  const station = /^[A-Z0-9]{4}$/.test(raw) ? raw : null;
+  const reg = radarRegion(d);
+  const scope = (radarState.scope === 'local' && !station) ? 'region'
+    : (radarState.scope === 'region' || radarState.scope === 'us') ? radarState.scope : (station ? 'local' : 'region');
+  const prod = scope === 'local' && radarState.prod === 'vel' ? 'vel' : 'bref';
+  const mode = radarState.mode === 'frames' ? 'frames' : 'loop';
+  const frame = Math.min(9, Math.max(0, radarState.frame | 0));
+  const suffix = mode === 'loop' ? 'loop' : String(frame);
+  const baseSpec = { station, reg, scope, prod, mode, frame };
+  const url = `${radarUrl(baseSpec, suffix)}?t=${radarState.bust}`;
+  let title, alt;
+  if (scope === 'local') {
+    title = `${station} · ${prod === 'vel' ? 'Base Velocity' : 'Base Reflectivity'}`;
+    alt = `NWS ${station} ${prod === 'vel' ? 'base velocity' : 'base reflectivity'} radar`;
+  } else if (scope === 'region') {
+    title = `${reg.label} · Regional Mosaic`;
+    alt = `NWS ${reg.label} regional radar mosaic`;
+  } else {
+    title = 'Contiguous US · National Mosaic';
+    alt = 'NWS Contiguous US radar mosaic';
+  }
+  const badge = mode === 'loop' ? 'Loop' : (frame === 0 ? 'Latest' : `${10 - frame}/10`);
+  const pageUrl = station ? `https://radar.weather.gov/station/${station}/standard` : 'https://radar.weather.gov/';
+  return { ...baseSpec, url, title, badge, alt, pageUrl };
+}
+const frameLabel = f => f === 0 ? 'Latest (10/10)' : f === 9 ? 'Oldest (1/10)' : `Frame ${10 - f}/10`;
+
+function syncRadarModal(spec) {
+  $('#radarModalTitle').textContent = spec.title;
+  $('#radarModalMeta').textContent = spec.mode === 'loop' ? 'Animated loop' : frameLabel(spec.frame);
+  const mImg = $('#radarModalImg');
+  if (mImg.getAttribute('src') !== spec.url) {
+    mImg.alt = spec.alt;
+    mImg.src = spec.url;
+  }
+}
+function openRadarModal() {
+  if (!data) return;
+  const spec = radarSpec(data);
+  $('#radarStage').classList.remove('zoomed');
+  $('#radarZoomBtn').textContent = 'Zoom';
+  syncRadarModal(spec);
+  $('#radarBg').hidden = false;
+}
+function closeRadarModal() { $('#radarBg').hidden = true; }
+
+function syncRadarView(d, quiet) {
+  const card = $('#radarCard');
+  if (!card || !d) return;
+  const spec = radarSpec(d);
+  const pos = 9 - spec.frame;
+  $('#radarSub').textContent = spec.title;
+  $('#radarTag').textContent = spec.badge;
+  card.querySelectorAll('[data-r-scope]').forEach(b => b.setAttribute('aria-pressed', b.dataset.rScope === spec.scope));
+  $('#radarProdSeg').hidden = !(spec.scope === 'local' && spec.station);
+  card.querySelectorAll('[data-r-prod]').forEach(b => b.setAttribute('aria-pressed', b.dataset.rProd === spec.prod));
+  card.querySelectorAll('[data-r-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.rMode === spec.mode));
+  $('#radarScrubber').hidden = spec.mode !== 'frames';
+  $('#radarRange').value = String(pos);
+  $('#radarPrev').disabled = pos <= 0;
+  $('#radarNext').disabled = pos >= 9;
+  $('#radarFrameLbl').textContent = frameLabel(spec.frame);
+  $('#radarCap').textContent = spec.mode === 'loop' ? 'Animated NWS radar loop' : 'Oldest (1/10) → Latest (10/10)';
+  $('#radarLink').href = spec.pageUrl;
+  if (!card.open) return;
+
+  const img = $('#radarImg'), view = $('#radarView'), err = $('#radarErr'), openBtn = $('#radarOpen'), reloadBtn = $('#radarReload');
+  if (img.getAttribute('src') === spec.url && img.complete && img.naturalWidth > 0) {
+    view.classList.remove('loading');
+    reloadBtn.classList.remove('spin');
+    err.hidden = true;
+    openBtn.hidden = false;
+    if (!$('#radarBg').hidden) syncRadarModal(spec);
+    return;
+  }
+  const mySeq = ++radarState.seq;
+  err.hidden = true;
+  openBtn.hidden = false;
+  if (!quiet) view.classList.add('loading');
+  img.onload = () => {
+    if (mySeq !== radarState.seq) return;
+    view.classList.remove('loading');
+    reloadBtn.classList.remove('spin');
+    err.hidden = true;
+    openBtn.hidden = false;
+    if (!$('#radarBg').hidden) syncRadarModal(spec);
+  };
+  img.onerror = () => {
+    if (mySeq !== radarState.seq) return;
+    view.classList.remove('loading');
+    reloadBtn.classList.remove('spin');
+    openBtn.hidden = true;
+    err.hidden = false;
+  };
+  img.alt = spec.alt;
+  img.src = spec.url;
+  if (!$('#radarBg').hidden) syncRadarModal(spec);
+  if (spec.mode === 'frames' && !(navigator.connection && navigator.connection.saveData)) {
+    for (const adj of [spec.frame - 1, spec.frame + 1]) {
+      if (adj >= 0 && adj <= 9) new Image().src = `${radarUrl(spec, String(adj))}?t=${radarState.bust}`;
+    }
+  }
+}
+
+function renderRadar(d) {
+  const host = $('#radar');
+  if (!d) { host.innerHTML = ''; return; }
+  const openPref = store.get('wx:radarOpen');
+  const isOpen = openPref === null ? true : !!openPref;
+  const spec = radarSpec(d);
+  const pos = 9 - spec.frame;
+  host.innerHTML = `<details class="day radar-card" id="radarCard"${isOpen ? ' open' : ''}>
+    <summary>
+      <span class="d-icon">${icon('radar')}</span>
+      <span class="d-name">Radar<small id="radarSub">${esc(spec.title)}</small></span>
+      <span class="r-tag" id="radarTag">${esc(spec.badge)}</span>
+      <span class="chev" aria-hidden="true"></span>
+    </summary>
+    <div class="radar-body">
+      <div class="radar-bar">
+        <div class="r-seg" role="group" aria-label="Radar coverage">
+          ${spec.station ? `<button class="r-btn" type="button" data-r-scope="local" aria-pressed="${spec.scope === 'local'}">Local (${esc(spec.station)})</button>` : ''}
+          <button class="r-btn" type="button" data-r-scope="region" aria-pressed="${spec.scope === 'region'}">Regional</button>
+          <button class="r-btn" type="button" data-r-scope="us" aria-pressed="${spec.scope === 'us'}">US</button>
+        </div>
+        <div class="r-seg" id="radarProdSeg" role="group" aria-label="Radar product"${spec.scope === 'local' && spec.station ? '' : ' hidden'}>
+          <button class="r-btn" type="button" data-r-prod="bref" aria-pressed="${spec.prod === 'bref'}">Reflectivity</button>
+          <button class="r-btn" type="button" data-r-prod="vel" aria-pressed="${spec.prod === 'vel'}">Velocity</button>
+        </div>
+        <div class="r-seg" role="group" aria-label="Playback mode">
+          <button class="r-btn" type="button" data-r-mode="loop" aria-pressed="${spec.mode === 'loop'}">Loop</button>
+          <button class="r-btn" type="button" data-r-mode="frames" aria-pressed="${spec.mode === 'frames'}">Frames</button>
+        </div>
+        <button class="r-reload" id="radarReload" type="button" aria-label="Reload radar" title="Reload radar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+        </button>
+      </div>
+      <div class="radar-scrubber" id="radarScrubber"${spec.mode === 'frames' ? '' : ' hidden'}>
+        <button class="r-step" id="radarPrev" type="button" aria-label="Older radar frame"${pos <= 0 ? ' disabled' : ''}>◀</button>
+        <input class="r-range" id="radarRange" type="range" min="0" max="9" value="${pos}" aria-label="Radar timeline from oldest to latest">
+        <button class="r-step" id="radarNext" type="button" aria-label="Newer radar frame"${pos >= 9 ? ' disabled' : ''}>▶</button>
+        <span class="r-flbl" id="radarFrameLbl">${frameLabel(spec.frame)}</span>
+      </div>
+      <div class="radar-view" id="radarView">
+        <button class="radar-open" id="radarOpen" type="button" aria-label="Enlarge radar image">
+          <img class="radar-img" id="radarImg" alt="${esc(spec.alt)}">
+          <span class="radar-hint">Tap to zoom</span>
+        </button>
+        <div class="radar-err" id="radarErr" hidden>
+          <div>Couldn't load the NWS radar image right now.</div>
+          <button class="btn" type="button" data-r-retry>Retry</button>
+        </div>
+      </div>
+      <div class="radar-foot">
+        <span id="radarCap">${esc(spec.mode === 'loop' ? 'Animated NWS radar loop' : 'Oldest (1/10) → Latest (10/10)')}</span>
+        <a id="radarLink" href="${esc(spec.pageUrl)}" target="_blank" rel="noopener">Full NWS radar ↗</a>
+      </div>
+    </div>
+  </details>`;
+  if (isOpen) syncRadarView(d, false);
+}
+
+$('#radar').addEventListener('toggle', e => {
+  const el = e.target;
+  if (el && el.id === 'radarCard') {
+    store.set('wx:radarOpen', el.open);
+    if (el.open && data) syncRadarView(data, false);
+  }
+}, true);
+$('#radar').addEventListener('click', e => {
+  if (!data) return;
+  const scope = e.target.closest('[data-r-scope]');
+  if (scope) {
+    radarState.scope = scope.dataset.rScope;
+    store.set('wx:radarScope', radarState.scope);
+    syncRadarView(data, false);
+    return;
+  }
+  const prod = e.target.closest('[data-r-prod]');
+  if (prod) {
+    radarState.prod = prod.dataset.rProd;
+    store.set('wx:radarProd', radarState.prod);
+    syncRadarView(data, false);
+    return;
+  }
+  const mode = e.target.closest('[data-r-mode]');
+  if (mode) {
+    radarState.mode = mode.dataset.rMode;
+    store.set('wx:radarMode', radarState.mode);
+    syncRadarView(data, false);
+    return;
+  }
+  if (e.target.closest('#radarPrev')) {
+    if (radarState.frame < 9) { radarState.frame++; syncRadarView(data, true); }
+    return;
+  }
+  if (e.target.closest('#radarNext')) {
+    if (radarState.frame > 0) { radarState.frame--; syncRadarView(data, true); }
+    return;
+  }
+  if (e.target.closest('#radarReload, [data-r-retry]')) {
+    const rb = $('#radarReload');
+    if (rb) rb.classList.add('spin');
+    radarState.bust = Date.now();
+    syncRadarView(data, false);
+    return;
+  }
+  if (e.target.closest('#radarOpen')) openRadarModal();
+});
+$('#radar').addEventListener('input', e => {
+  if (!data || e.target.id !== 'radarRange') return;
+  radarState.frame = 9 - Math.min(9, Math.max(0, parseInt(e.target.value, 10) || 0));
+  syncRadarView(data, true);
+});
+$('#radarClose').addEventListener('click', closeRadarModal);
+$('#radarBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeRadarModal(); });
+function toggleRadarZoom() {
+  const z = $('#radarStage').classList.toggle('zoomed');
+  $('#radarZoomBtn').textContent = z ? '1x' : 'Zoom';
+}
+$('#radarZoomBtn').addEventListener('click', toggleRadarZoom);
+$('#radarModalImg').addEventListener('click', toggleRadarZoom);
+
 let lastRenderHour = null;
 let headlineOpen = false;
 document.addEventListener('click', e => {
@@ -1110,10 +1465,12 @@ function render(d) {
   updateFooter(d, F);
   const alerts = renderAlerts(d, F, now);
   if (!hrs.length) {
+    $('#radar').innerHTML = '';
     $('#days').innerHTML = `<div class="empty">This saved forecast has run out.<br><button class="btn" data-retry>Get the latest forecast</button></div>`;
     return;
   }
   renderHero(d, F, hrs, now);
+  renderRadar(d);
 
   // Each card runs 6 AM to 6 AM, so a day's card holds that day and the night after it
   // (its high and the overnight low), the way forecasts are usually told.
@@ -1129,14 +1486,20 @@ function render(d) {
   const todayKey = F.key.format(now);
   const labels = new Map([[todayKey, 'Today'], [nextDayKey(todayKey), 'Tomorrow']]);
   const chips = [];
-  $('#days').innerHTML = glist.map((g, i) => {
+  const daysHtml = glist.map((g, i) => {
     const first = g.hours[0].t;
     const start = first - ((localHour(F, first) - 6 + 24) % 24) * HOUR;
     const sun = sunEvents(start, start + 24 * HOUR, d.loc.lat, d.loc.lon);
     const sunDay = sunEvents(start - 6 * HOUR, start + 18 * HOUR, d.loc.lat, d.loc.lon);
     return dayCard(g, F, i, labels, { alerts, sun, sunDay, chips });
   }).join('');
-  $('#strip').innerHTML = chips.map(c => `<button class="dn" data-day="${c.key}" aria-label="Jump to ${esc(c.name)}">
+  $('#days').innerHTML = daysHtml;
+  const rChip = `<button class="dn" data-radar-jump aria-label="Jump to weather radar">
+      <span class="dn-i">${icon('radar')}</span>
+      <span class="dn-n">Radar</span>
+      ${d.radar ? `<span class="dn-t"><small style="margin:0">${esc(d.radar)}</small></span>` : ''}
+    </button>`;
+  $('#strip').innerHTML = rChip + chips.map(c => `<button class="dn" data-day="${c.key}" aria-label="Jump to ${esc(c.name)}">
       <span class="dn-n">${esc(c.name)}</span>
       <span class="dn-i">${c.iconStr}</span>
       <span class="dn-t">${c.hi == null ? `<small style="margin:0 4px 0 0">Low</small>${c.lo}°` : `${c.hi}°<small>${c.lo}°</small>`}</span>
@@ -1162,6 +1525,15 @@ $('#hourStrip').addEventListener('click', e => {
   row.scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
 $('#strip').addEventListener('click', e => {
+  if (e.target.closest('[data-radar-jump]')) {
+    const card = $('#radarCard');
+    if (!card) return;
+    card.open = true;
+    store.set('wx:radarOpen', true);
+    if (data) syncRadarView(data, false);
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
   const b = e.target.closest('[data-day]');
   if (!b) return;
   const card = document.querySelector(`details.day[data-key="${b.dataset.day}"]`);
@@ -1202,6 +1574,7 @@ function loadSaved() {
   else {
     $('#days').innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
     $('#alerts').innerHTML = '';
+    $('#radar').innerHTML = '';
     $('#place').textContent = 'Loading forecast…';
   }
 }
@@ -1224,6 +1597,7 @@ async function refresh() {
       }
     } catch {}
     banner('');
+    radarState.bust = Date.now();
     render(fresh);
   } catch (e) {
     if (my !== token) return;
@@ -1311,7 +1685,7 @@ function closeSheet() { $('#sheetBg').hidden = true; }
 $('#placeBtn').addEventListener('click', openSheet);
 $('#sheetClose').addEventListener('click', closeSheet);
 $('#sheetBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeSheet(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); closeRadarModal(); } });
 $('#places').addEventListener('click', e => {
   if (e.target.closest('[data-gps]')) { locate(t => { $('#sheetMsg').textContent = t; }); return; }
   const pick = e.target.closest('[data-pick]'), del = e.target.closest('[data-del]');
