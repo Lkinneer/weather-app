@@ -24,18 +24,89 @@
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --bg: #0a1220; --card: #131f36; --ink: #e8eef8; --muted: #94a4bc; --line: #20304b;
     --night: #0f1a2f; --shade: rgba(0,0,0,.22); --accent: #6aa8ff; --rain: #5ea4ff; --rain-soft: rgba(94,164,255,.16);
     --warm: #ff9a3d; --shadow: none;
     --cloud: #8e9fb6; --cloud-back: #66778f; --storm-cloud: #5d6b84; --drop: #5ea4ff; --flake: #dbe9ff; --fog: #8f9aab;
   }
 }
+:root[data-theme=light] { color-scheme: light; }
+:root[data-theme=dark] {
+  --bg: #0a1220; --card: #131f36; --ink: #e8eef8; --muted: #94a4bc; --line: #20304b;
+  --night: #0f1a2f; --shade: rgba(0,0,0,.22); --accent: #6aa8ff; --rain: #5ea4ff; --rain-soft: rgba(94,164,255,.16);
+  --warm: #ff9a3d; --shadow: none;
+  --cloud: #8e9fb6; --cloud-back: #66778f; --storm-cloud: #5d6b84; --drop: #5ea4ff; --flake: #dbe9ff; --fog: #8f9aab;
+  color-scheme: dark;
+}
+:root[data-theme=oled] {
+  --bg: #000000; --card: #0b0c10; --ink: #f1f5fb; --muted: #8b95a6; --line: #1c1f29;
+  --night: #06070a; --shade: rgba(255,255,255,.04); --accent: #6aa8ff; --rain: #5ea4ff; --rain-soft: rgba(94,164,255,.18);
+  --warm: #ff9a3d; --shadow: none;
+  --cloud: #8e9fb6; --cloud-back: #66778f; --storm-cloud: #5d6b84; --drop: #5ea4ff; --flake: #dbe9ff; --fog: #8f9aab;
+  color-scheme: dark;
+}
+:root[data-theme=oled] :is(.day, .m-tile, .alert, .sheet, .radar-modal) { border: 1px solid var(--line); }
+:root[data-theme=oled] .hero { box-shadow: inset 0 -1px 0 rgba(255,255,255,.08); }
+:root[data-theme=weather][data-sky=sunny] {
+  --bg: #dceeff; --card: #ffffff; --ink: #0f2544; --muted: #4b6587; --line: #c9def6;
+  --night: #eaf3fe; --shade: rgba(28,86,168,.06); --accent: #1565d8; --rain: #1e73e8; --rain-soft: rgba(30,115,232,.14);
+  --warm: #f0841f; color-scheme: light;
+}
+:root[data-theme=weather][data-sky=cloudy] {
+  --bg: #dde2e9; --card: #f6f8fa; --ink: #1a2330; --muted: #556274; --line: #cbd3de;
+  --night: #eaeef3; --shade: rgba(30,45,68,.07); --accent: #42648c; --rain: #3872b8; --rain-soft: rgba(56,114,184,.14);
+  --warm: #d97828; color-scheme: light;
+}
+:root[data-theme=weather][data-sky=sunrise] {
+  --bg: #f5eae6; --card: #fffaf8; --ink: #2b1b24; --muted: #785d66; --line: #ead5cf;
+  --night: #f2e4e1; --shade: rgba(120,55,70,.06); --accent: #c9523b; --rain: #5578b8; --rain-soft: rgba(85,120,184,.14);
+  --warm: #e56a38; color-scheme: light;
+}
+:root[data-theme=weather][data-sky=sunset] {
+  --bg: #1b1128; --card: #27183a; --ink: #fff2ea; --muted: #d2b2c8; --line: #3f2858;
+  --night: #211432; --shade: rgba(0,0,0,.24); --accent: #ff965a; --rain: #88aaff; --rain-soft: rgba(136,170,255,.16);
+  --warm: #ffb067; --shadow: none;
+  --cloud: #c7b5d8; --cloud-back: #8f7ba8; --storm-cloud: #6f5e8a; --drop: #88aaff; --flake: #f7e9ff; --fog: #b8a6cb;
+  color-scheme: dark;
+}
+:root[data-theme=weather][data-sky=rain] {
+  --bg: #101e2e; --card: #182b40; --ink: #e7f0fa; --muted: #8fa9c4; --line: #273e59;
+  --night: #142336; --shade: rgba(0,0,0,.24); --accent: #68b0ff; --rain: #68b0ff; --rain-soft: rgba(104,176,255,.18);
+  --warm: #ff9e4a; --shadow: none;
+  --cloud: #8e9fb6; --cloud-back: #66778f; --storm-cloud: #5d6b84; --drop: #68b0ff; --flake: #dbe9ff; --fog: #8f9aab;
+  color-scheme: dark;
+}
+:root[data-theme=weather][data-sky=storm] {
+  --bg: #111122; --card: #1b1c34; --ink: #eceeff; --muted: #9b9dc4; --line: #2c2e4f;
+  --night: #15162a; --shade: rgba(0,0,0,.28); --accent: #9c8cff; --rain: #7ca4ff; --rain-soft: rgba(124,164,255,.18);
+  --warm: #ffb15e; --shadow: none;
+  --cloud: #8e94b6; --cloud-back: #62688c; --storm-cloud: #54597d; --drop: #7ca4ff; --flake: #dbe9ff; --fog: #8c91ab;
+  color-scheme: dark;
+}
+:root[data-theme=weather][data-sky=snow] {
+  --bg: #e5eef7; --card: #ffffff; --ink: #162638; --muted: #5a6f87; --line: #d2e0ee;
+  --night: #edf4fb; --shade: rgba(35,65,105,.06); --accent: #2c74c7; --rain: #3c82d6; --rain-soft: rgba(60,130,214,.14);
+  --warm: #e8822a; color-scheme: light;
+}
+:root[data-theme=weather][data-sky=fog] {
+  --bg: #e3e6ea; --card: #f8f9fb; --ink: #1f262e; --muted: #5e6873; --line: #d2d8df;
+  --night: #eceff2; --shade: rgba(30,40,52,.06); --accent: #4b6580; --rain: #4b7bb0; --rain-soft: rgba(75,123,176,.14);
+  --warm: #d97c30; color-scheme: light;
+}
+:root[data-theme=weather][data-sky=night] {
+  --bg: #081020; --card: #101c34; --ink: #e8eef8; --muted: #8fa3c2; --line: #1d2e4e;
+  --night: #0c162b; --shade: rgba(0,0,0,.25); --accent: #73b0ff; --rain: #64a8ff; --rain-soft: rgba(100,168,255,.16);
+  --warm: #ff9a3d; --shadow: none;
+  --cloud: #8e9fb6; --cloud-back: #66778f; --storm-cloud: #5d6b84; --drop: #64a8ff; --flake: #dbe9ff; --fog: #8f9aab;
+  color-scheme: dark;
+}
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
   background: var(--bg); color: var(--ink); min-height: 100vh;
+  transition: background-color .35s ease, color .25s ease;
   -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
   font-variant-numeric: tabular-nums;
 }
@@ -55,13 +126,15 @@ a { color: var(--accent); }
   background: var(--sky, linear-gradient(165deg, #4a95e6, #1e5fa8));
   border-radius: 0 0 28px 28px;
 }
-.hero[data-sky=sunny]  { --sky: linear-gradient(165deg, #5bb2f4, #2575d4); }
-.hero[data-sky=cloudy] { --sky: linear-gradient(165deg, #8193ab, #4b5c76); }
-.hero[data-sky=rain]   { --sky: linear-gradient(165deg, #4f72a0, #24405f); }
-.hero[data-sky=storm]  { --sky: linear-gradient(165deg, #50557f, #1d2140); }
-.hero[data-sky=snow]   { --sky: linear-gradient(165deg, #a4bad2, #5d7695); }
-.hero[data-sky=fog]    { --sky: linear-gradient(165deg, #9ea7b2, #67717e); }
-.hero[data-sky=night]  { --sky: linear-gradient(165deg, #22386a, #0b1530); }
+.hero[data-sky=sunny]   { --sky: linear-gradient(165deg, #5bb2f4, #2575d4); }
+.hero[data-sky=cloudy]  { --sky: linear-gradient(165deg, #8193ab, #4b5c76); }
+.hero[data-sky=sunrise] { --sky: linear-gradient(165deg, #f39c68, #c85877 52%, #484a88); }
+.hero[data-sky=sunset]  { --sky: linear-gradient(165deg, #f07650, #b33b6c 48%, #341b54); }
+.hero[data-sky=rain]    { --sky: linear-gradient(165deg, #4f72a0, #24405f); }
+.hero[data-sky=storm]   { --sky: linear-gradient(165deg, #50557f, #1d2140); }
+.hero[data-sky=snow]    { --sky: linear-gradient(165deg, #a4bad2, #5d7695); }
+.hero[data-sky=fog]     { --sky: linear-gradient(165deg, #9ea7b2, #67717e); }
+.hero[data-sky=night]   { --sky: linear-gradient(165deg, #22386a, #0b1530); }
 .hero-inner { max-width: 600px; margin: 0 auto; }
 .hero-top { display: flex; align-items: center; gap: 8px; }
 .place-btn {
@@ -407,6 +480,22 @@ footer .btn[hidden] { display: none; }
 .places .del { border: 0; background: none; color: var(--muted); font-size: .85rem; padding: 10px; cursor: pointer; }
 .sheet-label { margin: 6px 0 0; font-size: .74rem; font-weight: 650; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
 .sheet-msg { font-size: .85rem; color: var(--muted); min-height: 1.2em; margin: 0 0 8px; }
+.theme-list { display: grid; gap: 8px; margin-top: 4px; }
+.theme-opt {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  padding: 11px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); cursor: pointer;
+}
+.theme-opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.theme-swatch { width: 32px; height: 32px; border-radius: 50%; flex: none; border: 1px solid rgba(128,128,128,.28); }
+.theme-swatch.sw-weather { background: linear-gradient(135deg, #5bb2f4 0%, #f07650 55%, #4b5c76 100%); }
+.theme-swatch.sw-light { background: linear-gradient(135deg, #ffffff 50%, #dce7f5 50%); }
+.theme-swatch.sw-dark { background: linear-gradient(135deg, #131f36 50%, #0a1220 50%); }
+.theme-swatch.sw-oled { background: #000000; border-color: rgba(255,255,255,.3); }
+.theme-info { flex: 1; min-width: 0; }
+.theme-info b { display: block; font-size: .95rem; font-weight: 650; }
+.theme-info small { display: block; font-size: .78rem; color: var(--muted); margin-top: 1px; }
+.theme-chk { font-weight: 700; color: var(--accent); opacity: 0; }
+.theme-opt[aria-pressed="true"] .theme-chk { opacity: 1; }
 </style>
 </head>
 <body>
@@ -442,6 +531,9 @@ footer .btn[hidden] { display: none; }
   <div class="hero-inner">
     <div class="hero-top">
       <button class="place-btn" id="placeBtn" aria-label="Change location"><span id="place">Loading forecast…</span><span class="caret">▼</span></button>
+      <button class="icon-btn" id="themeBtn" aria-label="Theme settings" title="Appearance &amp; theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16c3.3 0 6-2.7 6-6 0-4.9-4.5-8.6-10-8.6z"/></svg>
+      </button>
       <button class="icon-btn" id="refresh" aria-label="Refresh forecast">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
       </button>
@@ -531,6 +623,34 @@ footer .btn[hidden] { display: none; }
   </div>
 </div>
 
+<div class="sheet-bg" id="themeBg" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="themeTitle">
+    <h2><span id="themeTitle">Appearance</span><button id="themeClose" type="button" aria-label="Close">✕</button></h2>
+    <div class="theme-list" id="themeList">
+      <button class="theme-opt" type="button" data-theme-opt="weather" aria-pressed="false">
+        <span class="theme-swatch sw-weather" aria-hidden="true"></span>
+        <span class="theme-info"><b>Follow the weather</b><small id="themeWeatherSub">Matches sky, sun, clouds &amp; sunset</small></span>
+        <span class="theme-chk" aria-hidden="true">✓</span>
+      </button>
+      <button class="theme-opt" type="button" data-theme-opt="light" aria-pressed="false">
+        <span class="theme-swatch sw-light" aria-hidden="true"></span>
+        <span class="theme-info"><b>Light</b><small>Crisp daytime palette</small></span>
+        <span class="theme-chk" aria-hidden="true">✓</span>
+      </button>
+      <button class="theme-opt" type="button" data-theme-opt="dark" aria-pressed="false">
+        <span class="theme-swatch sw-dark" aria-hidden="true"></span>
+        <span class="theme-info"><b>Dark</b><small>Traditional navy dark theme</small></span>
+        <span class="theme-chk" aria-hidden="true">✓</span>
+      </button>
+      <button class="theme-opt" type="button" data-theme-opt="oled" aria-pressed="false">
+        <span class="theme-swatch sw-oled" aria-hidden="true"></span>
+        <span class="theme-info"><b>OLED Black</b><small>True black for AMOLED screens</small></span>
+        <span class="theme-chk" aria-hidden="true">✓</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 (() => {
 'use strict';
@@ -553,6 +673,41 @@ const store = {
   del(k) { try { localStorage.removeItem(k); } catch {} },
 };
 const num = (v, lo, hi) => { const n = parseFloat(v); return Number.isFinite(n) && n >= lo && n <= hi ? n : null; };
+
+/* ---------------- Theme settings ---------------- */
+const THEME_NAMES = {
+  sunny: 'Bright blue skies', cloudy: 'Cloudy gray', sunrise: 'Clear sunrise', sunset: 'Clear sunset',
+  rain: 'Rainy slate', storm: 'Stormy twilight', snow: 'Crisp snow', fog: 'Misty fog', night: 'Clear night',
+};
+const SKY_META = {
+  sunny: '#2575d4', cloudy: '#4b5c76', sunrise: '#c85877', sunset: '#b33b6c',
+  rain: '#24405f', storm: '#1d2140', snow: '#5d7695', fog: '#67717e', night: '#0b1530',
+};
+function syncThemeChrome() {
+  const theme = document.documentElement.dataset.theme || 'weather';
+  const sky = document.documentElement.dataset.sky || 'sunny';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const color = theme === 'oled' ? '#000000' : theme === 'dark' ? '#0a1220' : theme === 'light' ? '#1e5fa8' : (SKY_META[sky] || '#1e5fa8');
+  if (meta) meta.content = color;
+  const sub = $('#themeWeatherSub');
+  if (sub) sub.textContent = THEME_NAMES[sky] ? `Live now: ${THEME_NAMES[sky]}` : 'Matches sky, sun, clouds & sunset';
+}
+function applyTheme(t) {
+  const valid = t === 'light' || t === 'dark' || t === 'oled' || t === 'weather' ? t : 'weather';
+  document.documentElement.dataset.theme = valid;
+  store.set('wx:theme', valid);
+  document.querySelectorAll('[data-theme-opt]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeOpt === valid ? 'true' : 'false'));
+  syncThemeChrome();
+}
+applyTheme(store.get('wx:theme') || 'weather');
+$('#themeBtn').addEventListener('click', () => { syncThemeChrome(); $('#themeBg').hidden = false; });
+$('#themeClose').addEventListener('click', () => { $('#themeBg').hidden = true; });
+$('#themeBg').addEventListener('click', e => { if (e.target === e.currentTarget) $('#themeBg').hidden = true; });
+$('#themeList').addEventListener('click', e => {
+  const b = e.target.closest('[data-theme-opt]');
+  if (!b) return;
+  applyTheme(b.dataset.themeOpt);
+});
 
 /* ---------------- Location ---------------- */
 let loc = (() => {
@@ -1220,13 +1375,20 @@ function renderAlerts(d, F, now) {
 function renderHero(d, F, hrs, now) {
   const cur = hrs[0];
   const obs = d.obs && d.obs.temp != null && now - d.obs.t < 2 * HOUR ? d.obs : null;
-  const sunUp = cosZenith(now, d.loc.lat, d.loc.lon) > -0.01454;
+  const cz = cosZenith(now, d.loc.lat, d.loc.lon);
+  const sunUp = cz > -0.01454;
   const text = obs && obs.text ? obs.text : cur.short;
   const shown = obs && obs.text ? obs.text : shortText(cur.short) + (cur.pop >= 20 ? ` · ${cur.pop}% chance` : '');
   const k = kind(text);
   const isDay = obs ? sunUp : cur.isDay;
-  const sky = k === 'storm' ? 'storm' : (k === 'snow' || k === 'mix') ? 'snow' : k === 'rain' ? 'rain' : k === 'fog' ? 'fog' : !isDay ? 'night' : k === 'cloudy' ? 'cloudy' : 'sunny';
+  const golden = cz >= -0.05 && cz <= 0.16;
+  const clearish = k !== 'storm' && k !== 'snow' && k !== 'mix' && k !== 'rain' && k !== 'fog' && k !== 'cloudy';
+  const sky = k === 'storm' ? 'storm' : (k === 'snow' || k === 'mix') ? 'snow' : k === 'rain' ? 'rain' : k === 'fog' ? 'fog'
+    : (clearish && golden) ? (localHour(F, now) < 12 ? 'sunrise' : 'sunset')
+    : !isDay ? 'night' : k === 'cloudy' ? 'cloudy' : 'sunny';
   $('#hero').dataset.sky = sky;
+  document.documentElement.dataset.sky = sky;
+  syncThemeChrome();
   $('#nowIcon').innerHTML = icon(iconName(text, isDay));
   const temp = obs ? obs.temp : cur.temp;
   $('#nowTemp').textContent = temp + '°';
