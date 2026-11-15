@@ -48,58 +48,55 @@
 }
 :root[data-theme=oled] :is(.day, .m-tile, .alert, .sheet, .radar-modal) { border: 1px solid var(--line); }
 :root[data-theme=oled] .hero { box-shadow: inset 0 -1px 0 rgba(255,255,255,.08); }
+:root[data-theme=weather] {
+  --shadow: 0 2px 12px rgba(5,15,35,.18);
+  --cloud: #fff; --cloud-back: rgba(255,255,255,.65); --storm-cloud: #e3e8f2; --drop: #bfe0ff; --flake: #fff; --fog: rgba(255,255,255,.85);
+  color-scheme: dark;
+}
 :root[data-theme=weather][data-sky=sunny] {
-  --bg: #dceeff; --card: #ffffff; --ink: #0f2544; --muted: #4b6587; --line: #c9def6;
-  --night: #eaf3fe; --shade: rgba(28,86,168,.06); --accent: #1565d8; --rain: #1e73e8; --rain-soft: rgba(30,115,232,.14);
-  --warm: #f0841f; color-scheme: light;
+  --bg: #1d60bd; --card: #2b74d4; --ink: #ffffff; --muted: rgba(235,245,255,.82); --line: rgba(255,255,255,.16);
+  --night: #2162bd; --shade: rgba(10,35,85,.2); --accent: #bfe0ff; --rain: #9fd0ff; --rain-soft: rgba(159,208,255,.22);
+  --warm: #ffd166;
 }
 :root[data-theme=weather][data-sky=cloudy] {
-  --bg: #dde2e9; --card: #f6f8fa; --ink: #1a2330; --muted: #556274; --line: #cbd3de;
-  --night: #eaeef3; --shade: rgba(30,45,68,.07); --accent: #42648c; --rain: #3872b8; --rain-soft: rgba(56,114,184,.14);
-  --warm: #d97828; color-scheme: light;
+  --bg: #46566d; --card: #566882; --ink: #f4f7fb; --muted: rgba(226,234,245,.8); --line: rgba(255,255,255,.15);
+  --night: #404f65; --shade: rgba(15,24,38,.22); --accent: #b8d4f5; --rain: #96c4f5; --rain-soft: rgba(150,196,245,.2);
+  --warm: #ffbd69;
 }
 :root[data-theme=weather][data-sky=sunrise] {
-  --bg: #f5eae6; --card: #fffaf8; --ink: #2b1b24; --muted: #785d66; --line: #ead5cf;
-  --night: #f2e4e1; --shade: rgba(120,55,70,.06); --accent: #c9523b; --rain: #5578b8; --rain-soft: rgba(85,120,184,.14);
-  --warm: #e56a38; color-scheme: light;
+  --bg: #543b69; --card: #684978; --ink: #fff7f4; --muted: rgba(255,228,220,.82); --line: rgba(255,255,255,.16);
+  --night: #47315a; --shade: rgba(25,10,35,.22); --accent: #ffb88c; --rain: #9fc5ff; --rain-soft: rgba(159,197,255,.2);
+  --warm: #ffd07b;
 }
 :root[data-theme=weather][data-sky=sunset] {
-  --bg: #1b1128; --card: #27183a; --ink: #fff2ea; --muted: #d2b2c8; --line: #3f2858;
-  --night: #211432; --shade: rgba(0,0,0,.24); --accent: #ff965a; --rain: #88aaff; --rain-soft: rgba(136,170,255,.16);
-  --warm: #ffb067; --shadow: none;
-  --cloud: #c7b5d8; --cloud-back: #8f7ba8; --storm-cloud: #6f5e8a; --drop: #88aaff; --flake: #f7e9ff; --fog: #b8a6cb;
-  color-scheme: dark;
+  --bg: #31194d; --card: #432363; --ink: #fff4ee; --muted: rgba(242,212,230,.82); --line: rgba(255,255,255,.16);
+  --night: #281440; --shade: rgba(15,5,28,.25); --accent: #ffa470; --rain: #96b8ff; --rain-soft: rgba(150,184,255,.2);
+  --warm: #ffbe6b;
 }
 :root[data-theme=weather][data-sky=rain] {
-  --bg: #101e2e; --card: #182b40; --ink: #e7f0fa; --muted: #8fa9c4; --line: #273e59;
-  --night: #142336; --shade: rgba(0,0,0,.24); --accent: #68b0ff; --rain: #68b0ff; --rain-soft: rgba(104,176,255,.18);
-  --warm: #ff9e4a; --shadow: none;
-  --cloud: #8e9fb6; --cloud-back: #66778f; --storm-cloud: #5d6b84; --drop: #68b0ff; --flake: #dbe9ff; --fog: #8f9aab;
-  color-scheme: dark;
+  --bg: #1c3552; --card: #264568; --ink: #edf4fc; --muted: rgba(205,224,245,.8); --line: rgba(255,255,255,.14);
+  --night: #172c45; --shade: rgba(8,18,32,.25); --accent: #82c2ff; --rain: #82c2ff; --rain-soft: rgba(130,194,255,.2);
+  --warm: #ffb266;
 }
 :root[data-theme=weather][data-sky=storm] {
-  --bg: #111122; --card: #1b1c34; --ink: #eceeff; --muted: #9b9dc4; --line: #2c2e4f;
-  --night: #15162a; --shade: rgba(0,0,0,.28); --accent: #9c8cff; --rain: #7ca4ff; --rain-soft: rgba(124,164,255,.18);
-  --warm: #ffb15e; --shadow: none;
-  --cloud: #8e94b6; --cloud-back: #62688c; --storm-cloud: #54597d; --drop: #7ca4ff; --flake: #dbe9ff; --fog: #8c91ab;
-  color-scheme: dark;
+  --bg: #191c38; --card: #24284d; --ink: #eef0ff; --muted: rgba(204,208,242,.8); --line: rgba(255,255,255,.14);
+  --night: #14172e; --shade: rgba(6,8,20,.28); --accent: #b0a4ff; --rain: #8cb4ff; --rain-soft: rgba(140,180,255,.2);
+  --warm: #ffbe70;
 }
 :root[data-theme=weather][data-sky=snow] {
-  --bg: #e5eef7; --card: #ffffff; --ink: #162638; --muted: #5a6f87; --line: #d2e0ee;
-  --night: #edf4fb; --shade: rgba(35,65,105,.06); --accent: #2c74c7; --rain: #3c82d6; --rain-soft: rgba(60,130,214,.14);
-  --warm: #e8822a; color-scheme: light;
+  --bg: #516884; --card: #627c9c; --ink: #ffffff; --muted: rgba(235,243,252,.84); --line: rgba(255,255,255,.18);
+  --night: #465c76; --shade: rgba(20,34,54,.2); --accent: #cbe5ff; --rain: #b0d6ff; --rain-soft: rgba(176,214,255,.22);
+  --warm: #ffd07b;
 }
 :root[data-theme=weather][data-sky=fog] {
-  --bg: #e3e6ea; --card: #f8f9fb; --ink: #1f262e; --muted: #5e6873; --line: #d2d8df;
-  --night: #eceff2; --shade: rgba(30,40,52,.06); --accent: #4b6580; --rain: #4b7bb0; --rain-soft: rgba(75,123,176,.14);
-  --warm: #d97c30; color-scheme: light;
+  --bg: #5a636f; --card: #6b7582; --ink: #f5f7fa; --muted: rgba(230,235,240,.82); --line: rgba(255,255,255,.16);
+  --night: #4f5762; --shade: rgba(18,22,28,.2); --accent: #c4ddf5; --rain: #a2c8f0; --rain-soft: rgba(162,200,240,.2);
+  --warm: #ffbe6b;
 }
 :root[data-theme=weather][data-sky=night] {
-  --bg: #081020; --card: #101c34; --ink: #e8eef8; --muted: #8fa3c2; --line: #1d2e4e;
-  --night: #0c162b; --shade: rgba(0,0,0,.25); --accent: #73b0ff; --rain: #64a8ff; --rain-soft: rgba(100,168,255,.16);
-  --warm: #ff9a3d; --shadow: none;
-  --cloud: #8e9fb6; --cloud-back: #66778f; --storm-cloud: #5d6b84; --drop: #64a8ff; --flake: #dbe9ff; --fog: #8f9aab;
-  color-scheme: dark;
+  --bg: #0b1530; --card: #142347; --ink: #e8eef8; --muted: rgba(182,202,232,.8); --line: rgba(255,255,255,.13);
+  --night: #0e1a38; --shade: rgba(0,0,0,.25); --accent: #7cb6ff; --rain: #6eb0ff; --rain-soft: rgba(110,176,255,.18);
+  --warm: #ff9f45;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
